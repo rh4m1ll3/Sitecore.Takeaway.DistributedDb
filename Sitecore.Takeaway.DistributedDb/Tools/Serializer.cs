@@ -24,7 +24,7 @@ namespace Sitecore.Takeaway.DistributedDb.Tools
             try
             {
                 return Assert.ResultNotNull<object>(contractJsonSerializer.ReadObject(jsonReader));
-                return contractJsonSerializer.ReadObject(jsonReader);
+                //return contractJsonSerializer.ReadObject(jsonReader);
             }
             catch (Exception ex)
             {
