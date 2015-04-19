@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{A1EB8959-C65F-484D-B54E-A2FCA7A6A684}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sitecore.Rocks.Plugin.DistributedDb</RootNamespace>
+    <AssemblyName>Sitecore.Rocks.Plugin.DistributedDb</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\Sitecore.Takeaway.DistributedDb\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>C:\Users\Rhamille\AppData\Local\Sitecore\Sitecore.Rocks\Plugins\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>C:\Users\Rhamille\AppData\Local\Sitecore\Sitecore.Rocks\Plugins\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Sitecore.Rocks, Version=1.0.0.0, Culture=neutral, PublicKeyToken=a3d60f56f7d71b90, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Rocks.Client.1.4.0.0\lib\net40\Sitecore.Rocks.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Rocks.Plugins, Version=1.0.0.0, Culture=neutral, PublicKeyToken=97d4151bbb4c9bdf, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Rocks.Client.1.4.0.0\lib\net40\Sitecore.Rocks.Plugins.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Rocks.Speak, Version=1.0.0.0, Culture=neutral, PublicKeyToken=bde424fe5a27fd6a, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Rocks.Client.1.4.0.0\lib\net40\Sitecore.Rocks.Speak.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Rocks.Validation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=87bd4324f13866a8, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Rocks.Client.1.4.0.0\lib\net40\Sitecore.Rocks.Validation.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Sitecore.Rocks.VisualStudio, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1cc94664b6ed6bb0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sitecore.Rocks.Client.1.4.0.0\lib\net40\Sitecore.Rocks.VisualStudio.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\DbSyncPipelineResult.cs" />
+    <Compile Include="Commands\ProvisionCommand.cs" />
+    <Compile Include="Commands\DeprovisionClientCommand.cs" />
+    <Compile Include="Commands\DeprovisionCommand.cs" />
+    <Compile Include="Commands\ProvisionClientCommand.cs" />
+    <Compile Include="Commands\DeprovisionServerCommand.cs" />
+    <Compile Include="Commands\ProvisionServerCommand.cs" />
+    <Compile Include="Commands\SynchronizeCommand.cs" />
+    <Compile Include="Commands\DistributedDbCommand.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ManagementTabs\DistributedDbTab.xaml.cs">
+      <DependentUpon>DistributedDbTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Tools\CommandWrapper.cs" />
+    <Compile Include="Tools\Serializer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="ManagementTabs\DistributedDbTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
+  </Target>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
