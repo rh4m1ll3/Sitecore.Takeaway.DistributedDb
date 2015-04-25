@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>C:\Users\Rhamille\AppData\Local\Sitecore\Sitecore.Rocks\Plugins\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
+    <OutputPath>bin\Debug\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>C:\Users\Rhamille\AppData\Local\Sitecore\Sitecore.Rocks\Plugins\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
+    <OutputPath>bin\Debug\Sitecore.Rocks.Plugin.DistributedDb</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

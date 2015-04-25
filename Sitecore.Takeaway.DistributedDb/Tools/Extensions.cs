@@ -82,7 +82,7 @@ namespace Sitecore.Takeaway.DistributedDb.Tools
             {
                 foreach (var idx in scopeProvisioningWrapper.GetFragmentedIndexes(table.Name, connection))
                 {
-                    scopeProvisioningWrapper.RebuildTableIndexes(idx.Key, idx.Value, connection);
+                    scopeProvisioningWrapper.RebuildTableIndexes(idx.TableName, idx.IndexName, connection);
                 }
             }
         }
@@ -97,7 +97,10 @@ namespace Sitecore.Takeaway.DistributedDb.Tools
             {
                 foreach (var idx in scopeProvisioningWrapper.GetFragmentedIndexes(table.Name, connection))
                 {
-                    scopeProvisioningWrapper.ReorganizeTableIndexes(idx.Key, idx.Value, connection);
+                    if (idx.Fragmentation < 30)
+                        scopeProvisioningWrapper.ReorganizeTableIndexes(idx.TableName, idx.IndexName, connection);
+                    else
+                        scopeProvisioningWrapper.RebuildTableIndexes(idx.TableName, idx.IndexName, connection);
                 }
             }
         }

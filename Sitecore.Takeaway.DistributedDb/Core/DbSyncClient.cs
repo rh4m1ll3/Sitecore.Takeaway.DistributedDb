@@ -4,6 +4,7 @@ using Microsoft.Synchronization.Data.SqlServer;
 using Sitecore.Diagnostics;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Data.SqlClient;
 
 namespace Sitecore.Takeaway.DistributedDb.Core
@@ -126,7 +127,14 @@ namespace Sitecore.Takeaway.DistributedDb.Core
 
                     ((SqlSyncProvider)syncOrchestrator.LocalProvider).ApplyChangeFailed += new EventHandler<DbApplyChangeFailedEventArgs>(SynchronizeClient_ApplyChangeFailed);
                     ((SqlSyncProvider)syncOrchestrator.RemoteProvider).ApplyChangeFailed += new EventHandler<DbApplyChangeFailedEventArgs>(SynchronizeServer_ApplyChangeFailed);
-                    //((SqlSyncProvider)syncOrchestrator.LocalProvider).ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(Synchronize_ApplyingChanges);
+                    ((SqlSyncProvider)syncOrchestrator.LocalProvider).ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(SynchronizeClient_ApplyingChanges);
+                    ((SqlSyncProvider)syncOrchestrator.RemoteProvider).ApplyingChanges += new EventHandler<DbApplyingChangesEventArgs>(SynchronizeServer_ApplyingChanges);
+                    ((SqlSyncProvider)syncOrchestrator.LocalProvider).ChangesApplied += new EventHandler<DbChangesAppliedEventArgs>(SynchronizeClient_ChangesApplied);
+                    ((SqlSyncProvider)syncOrchestrator.RemoteProvider).ChangesApplied += new EventHandler<DbChangesAppliedEventArgs>(SynchronizeServer_ChangesApplied);
+                    ((SqlSyncProvider)syncOrchestrator.LocalProvider).SelectingChanges += new EventHandler<DbSelectingChangesEventArgs>(SynchronizeClient_SelectingChanges);
+                    ((SqlSyncProvider)syncOrchestrator.RemoteProvider).SelectingChanges += new EventHandler<DbSelectingChangesEventArgs>(SynchronizeServer_SelectingChanges);
+                    ((SqlSyncProvider)syncOrchestrator.LocalProvider).ChangesSelected += new EventHandler<DbChangesSelectedEventArgs>(SynchronizeClient_ChangesSelected);
+                    ((SqlSyncProvider)syncOrchestrator.RemoteProvider).ChangesSelected += new EventHandler<DbChangesSelectedEventArgs>(SynchronizeServer_ChangesSelected);
                     //((SqlSyncProvider)syncOrchestrator.LocalProvider).SyncProgress += new EventHandler<DbSyncProgressEventArgs>(Synchronize_SyncProgress);
                     syncOrchestrator.SessionProgress += new EventHandler<SyncStagedProgressEventArgs>(Synchronize_ProgressChanged);
 
@@ -171,104 +179,79 @@ namespace Sitecore.Takeaway.DistributedDb.Core
                 Log.Error("[DistributedDb] Synchronize Server ApplyChangeFailed Error", e.Error, this);
         }
 
-        public void Synchronize_SyncProgress(object sender, DbSyncProgressEventArgs args)
-        {
-            string message = "[DistributedDb] Synchronize_SyncProgress Progress: ";
-
-            switch (args.Stage)
-            {
-                case DbSyncStage.ApplyingInserts:
-                    message += "[DistributedDb] Synchronize_SyncProgress Applying insert to table: " + args.TableProgress.TableName;
-                    message += "[" + args.TableProgress.Inserts.ToString() + "|" + args.TableProgress.Updates.ToString() + "|" + args.TableProgress.Deletes.ToString() + "]";
-                    message += "(Applied:" + args.TableProgress.ChangesApplied.ToString() + "/Pending:" + args.TableProgress.ChangesPending.ToString() +
-                       "/Failed:" + args.TableProgress.ChangesFailed.ToString() + "/Total:" + args.TableProgress.TotalChanges.ToString() + ")";
-                    break;
-
-                case DbSyncStage.ApplyingUpdates:
-                    message += "[DistributedDb] Synchronize_SyncProgress Applying update to table: " + args.TableProgress.TableName;
-                    message += "[" + args.TableProgress.Inserts.ToString() + "|" + args.TableProgress.Updates.ToString() + "|" + args.TableProgress.Deletes.ToString() + "]";
-                    message += "(Applied:" + args.TableProgress.ChangesApplied.ToString() + "/Pending:" + args.TableProgress.ChangesPending.ToString() +
-                    "/Failed:" + args.TableProgress.ChangesFailed.ToString() + "/Total:" + args.TableProgress.TotalChanges.ToString() + ")";
-                    break;
-
-                case DbSyncStage.ApplyingDeletes:
-                    message += "[DistributedDb] Synchronize_SyncProgress Applying delete to table: " + args.TableProgress.TableName;
-                    message += "[" + args.TableProgress.Inserts.ToString() + "|" + args.TableProgress.Updates.ToString() + "|" + args.TableProgress.Deletes.ToString() + "]";
-                    message += "(Applied:" + args.TableProgress.ChangesApplied.ToString() + "/Pending:" + args.TableProgress.ChangesPending.ToString() +
-                    "/Failed:" + args.TableProgress.ChangesFailed.ToString() + "/Total:" + args.TableProgress.TotalChanges.ToString() + ")";
-                    break;
-
-                case DbSyncStage.SelectingChanges:
-                    message += "[DistributedDb] Synchronize_SyncProgress Enumerating changes for table: " + args.TableProgress.TableName;
-                    message += "[" + args.TableProgress.Inserts.ToString() + "|" + args.TableProgress.Updates.ToString() + "|" + args.TableProgress.Deletes.ToString() + "]";
-                    break;
-
-                default:
-                    DbSyncStage stage = args.Stage;
-
-                    break;
-            }
-
-            Log.Info(message, this);
-        }
-
         public void Synchronize_ProgressChanged(object sender, SyncStagedProgressEventArgs args)
         {
             if (args.Stage != SessionProgressStage.ChangeDetection)
             {
-                Log.Info("[DistributedDb] Synchronize_ProgressChanged Progress Changed: provider - " + args.ReportingProvider.ToString(), this);
-                Log.Info("[DistributedDb] Synchronize_ProgressChanged stage - " + args.Stage.ToString(), this);
-                Log.Info("[DistributedDb] Synchronize_ProgressChanged work - " + args.CompletedWork + " of " + args.TotalWork, this);
+                Log.Info("[DistributedDb] Synchronize Progress Changed: Provider - " + args.ReportingProvider.ToString(), this);
+                Log.Info("[DistributedDb] Synchronize Progress Changed: Stage - " + args.Stage.ToString(), this);
+                Log.Info("[DistributedDb] Synchronize Progress Changed: Work - " + args.CompletedWork + " of " + args.TotalWork, this);
             }
         }
 
-        public void Synchronize_ApplyingChanges(object sender, DbApplyingChangesEventArgs args)
+        public void SynchronizeClient_ApplyingChanges(object sender, DbApplyingChangesEventArgs args)
         {
-            Log.Info("[DistributedDb] Synchronize_ApplyingChanges Sync Stage: Applying Changes", this);
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Client Applying Changes");
         }
 
-        public void Synchronize_ProgressChangedx(object sender, DbSyncSessionProgressEventArgs args)
+        public void SynchronizeServer_ApplyingChanges(object sender, DbApplyingChangesEventArgs args)
         {
-            string message = "";
-            var a = args.DbSyncStage;
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Server Applying Changes");
+        }
 
-            try
+        public void LogChanges(Collection<DbSyncTableProgress> tables, string source)
+        {
+            foreach (var progress in tables)
             {
-                DbSyncSessionProgressEventArgs sessionProgress = (DbSyncSessionProgressEventArgs)args;
-                DbSyncScopeProgress progress = sessionProgress.GroupProgress;
-                switch (sessionProgress.DbSyncStage)
+                if (progress.TotalChanges > 0)
                 {
-                    case DbSyncStage.SelectingChanges:
-                        message += "[DistributedDb] Synchronize_ProgressChanged Sync Stage: Selecting Changes";
-                        Log.Info(message, this);
-                        foreach (DbSyncTableProgress tableProgress in progress.TablesProgress)
-                        {
-                            message = "[DistributedDb] Synchronize_ProgressChanged Enumerated changes for table: " + tableProgress.TableName;
-                            message += "[Inserts:" + tableProgress.Inserts.ToString() + "/Updates :" + tableProgress.Updates.ToString() + "/Deletes :" + tableProgress.Deletes.ToString() + "]";
-                            Log.Info(message, this);
-                        }
-                        break;
-
-                    case DbSyncStage.ApplyingChanges:
-
-                        break;
-
-                    default:
-                        break;
+                    Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] TotalChanges : " + progress.TotalChanges, this);
+                    if (progress.Inserts > 0) 
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] Inserts : " + progress.Inserts, this);
+                    if (progress.Updates > 0) 
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] Updates : " + progress.Updates, this);
+                    if (progress.Deletes > 0) 
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] Deletes : " + progress.Deletes, this);
+                    if (progress.ChangesApplied > 0)
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] ChangesApplied : " + progress.ChangesApplied, this);
+                    if (progress.ChangesFailed > 0)
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] ChangesFailed : " + progress.ChangesFailed, this);
+                    if (progress.ChangesPending > 0)
+                        Log.Info("[DistributedDb] Synchronize " + source + " [" + progress.TableName + "] ChangesPending : " + progress.ChangesPending, this);
+                    
                 }
-
-                message = "[DistributedDb] Synchronize_ProgressChanged Total Changes : " + progress.TotalChanges.ToString() + "  Inserts :" + progress.TotalInserts.ToString();
-                message += "  Updates :" + progress.TotalUpdates.ToString() + "  Deletes :" + progress.TotalDeletes.ToString();
-                Log.Info(message, this);
             }
-            catch (Exception e)
-            {
-                Log.Error("[DistributedDb] Synchronize_ProgressChanged ", e, this);
-                throw;
-            }
-
-            message = "[DistributedDb] Synchronize_ProgressChanged Completed : " + args.CompletedWork + "%";
-            Log.Info(message, this);
         }
+
+        public void SynchronizeClient_ChangesApplied(object sender, DbChangesAppliedEventArgs args)
+        {
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Client Changes Applied");
+        }
+
+        public void SynchronizeServer_ChangesApplied(object sender, DbChangesAppliedEventArgs args)
+        {
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Server Changes Applied");
+        }
+
+        public void SynchronizeClient_SelectingChanges(object sender, DbSelectingChangesEventArgs args)
+        {
+            Log.Info("[DistributedDb] Synchronize Client Selecting Changes", this);
+        }
+
+        public void SynchronizeServer_SelectingChanges(object sender, DbSelectingChangesEventArgs args)
+        {
+            Log.Info("[DistributedDb] Synchronize Server Selecting Changes", this);
+        }
+
+        public void SynchronizeClient_ChangesSelected(object sender, DbChangesSelectedEventArgs args)
+        {
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Client Changes Selected");
+        }
+
+        public void SynchronizeServer_ChangesSelected(object sender, DbChangesSelectedEventArgs args)
+        {
+            LogChanges(args.Context.ScopeProgress.TablesProgress, "Server Changes Selected");
+        }
+
     }
 }
