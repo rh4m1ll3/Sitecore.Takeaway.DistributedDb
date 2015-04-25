@@ -141,12 +141,18 @@ namespace Sitecore.Takeaway.DistributedDb.Core
                     var syncStats = syncOrchestrator.Synchronize();
 
                     Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] SyncStartTime: " + syncStats.SyncStartTime.ToString("hh:mm:ss.fff"), this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesTotal: " + syncStats.UploadChangesTotal, this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesTotal: " + syncStats.DownloadChangesTotal, this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesApplied: " + syncStats.UploadChangesApplied, this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesApplied: " + syncStats.DownloadChangesApplied, this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesFailed: " + syncStats.UploadChangesFailed, this);
-                    Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesFailed: " + syncStats.DownloadChangesFailed, this);
+                    if (syncStats.UploadChangesTotal > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesTotal: " + syncStats.UploadChangesTotal, this);
+                    if (syncStats.DownloadChangesTotal > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesTotal: " + syncStats.DownloadChangesTotal, this);
+                    if (syncStats.UploadChangesApplied > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesApplied: " + syncStats.UploadChangesApplied, this);
+                    if (syncStats.DownloadChangesApplied > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesApplied: " + syncStats.DownloadChangesApplied, this);
+                    if (syncStats.UploadChangesFailed > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] UploadChangesFailed: " + syncStats.UploadChangesFailed, this);
+                    if (syncStats.DownloadChangesFailed > 0)
+                        Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] DownloadChangesFailed: " + syncStats.DownloadChangesFailed, this);
                     Log.Info("[DistributedDb] Synchronize Client Statistics [" + db.Scope + "] SyncEndTime: " + syncStats.SyncEndTime.ToString("hh:mm:ss.fff"), this);
 
                     result.Add(db.Scope, syncStats);
